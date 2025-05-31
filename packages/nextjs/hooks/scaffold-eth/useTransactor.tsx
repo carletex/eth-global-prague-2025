@@ -1,9 +1,10 @@
+import { useNotification } from "@blockscout/app-sdk";
 import { Hash, SendTransactionParameters, TransactionReceipt, WalletClient } from "viem";
 import { Config, useWalletClient } from "wagmi";
 import { getPublicClient } from "wagmi/actions";
 import { SendTransactionMutate } from "wagmi/query";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
-import { getBlockExplorerTxLink, getParsedError, notification } from "~~/utils/scaffold-eth";
+import { getParsedError, notification } from "~~/utils/scaffold-eth";
 import { TransactorFuncOptions } from "~~/utils/scaffold-eth/contract";
 
 type TransactionFunc = (
@@ -38,6 +39,7 @@ export const useTransactor = (_walletClient?: WalletClient): TransactionFunc => 
   if (walletClient === undefined && data) {
     walletClient = data;
   }
+  const { openTxToast } = useNotification();
 
   const result: TransactionFunc = async (tx, options) => {
     if (!walletClient) {
@@ -49,7 +51,6 @@ export const useTransactor = (_walletClient?: WalletClient): TransactionFunc => 
     let notificationId = null;
     let transactionHash: Hash | undefined = undefined;
     let transactionReceipt: TransactionReceipt | undefined;
-    let blockExplorerTxURL = "";
     try {
       const network = await walletClient.getChainId();
       // Get full transaction from public client
@@ -67,26 +68,29 @@ export const useTransactor = (_walletClient?: WalletClient): TransactionFunc => 
       }
       notification.remove(notificationId);
 
-      blockExplorerTxURL = network ? getBlockExplorerTxLink(network, transactionHash) : "";
+      openTxToast(network.toString(), transactionHash);
 
-      notificationId = notification.loading(
-        <TxnNotification message="Waiting for transaction to complete." blockExplorerLink={blockExplorerTxURL} />,
-      );
+      // blockExplorerTxURL = network ? getBlockExplorerTxLink(network, transactionHash) : "";
+
+      // notificationId = notification.loading(
+      //   <TxnNotification message="Waiting for transaction to complete." blockExplorerLink={blockExplorerTxURL} />,
+      // );
+      //
 
       transactionReceipt = await publicClient.waitForTransactionReceipt({
         hash: transactionHash,
         confirmations: options?.blockConfirmations,
       });
-      notification.remove(notificationId);
+      // notification.remove(notificationId);
 
-      if (transactionReceipt.status === "reverted") throw new Error("Transaction reverted");
+      // if (transactionReceipt.status === "reverted") throw new Error("Transaction reverted");
 
-      notification.success(
-        <TxnNotification message="Transaction completed successfully!" blockExplorerLink={blockExplorerTxURL} />,
-        {
-          icon: "🎉",
-        },
-      );
+      // notification.success(
+      //   <TxnNotification message="Transaction completed successfully!" blockExplorerLink={blockExplorerTxURL} />,
+      //   {
+      //     icon: "🎉",
+      //   },
+      // );
 
       if (options?.onBlockConfirmation) options.onBlockConfirmation(transactionReceipt);
     } catch (error: any) {
@@ -98,7 +102,7 @@ export const useTransactor = (_walletClient?: WalletClient): TransactionFunc => 
 
       // if receipt was reverted, show notification with block explorer link and return error
       if (transactionReceipt?.status === "reverted") {
-        notification.error(<TxnNotification message={message} blockExplorerLink={blockExplorerTxURL} />);
+        notification.error(<TxnNotification message={message} />);
         throw error;
       }
 
