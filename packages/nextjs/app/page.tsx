@@ -1,12 +1,25 @@
 "use client";
 
+import { useTransactionPopup } from "@blockscout/app-sdk";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { CodeBracketIcon, CubeTransparentIcon, DocumentTextIcon, GlobeAltIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
+import { useTargetNetwork } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
+  const { targetNetwork } = useTargetNetwork();
+
+  const { openPopup } = useTransactionPopup();
+
+  // Show transactions for a specific address
+  const showAddressTransactions = () => {
+    openPopup({
+      chainId: targetNetwork.id.toString(), // Ethereum mainnet
+      address: connectedAddress, // Optional: specific address
+    });
+  };
 
   return (
     <>
@@ -21,6 +34,9 @@ const Home: NextPage = () => {
           <div className="flex justify-center items-center space-x-2 flex-col mb-8">
             <p className="my-2 font-medium">Connected Address:</p>
             <Address address={connectedAddress} />
+            <button onClick={showAddressTransactions} className="btn btn-primary btn-sm mt-6">
+              Show Transactions
+            </button>
           </div>
 
           <div className="text-center mb-8">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { NotificationProvider } from "@blockscout/app-sdk";
+import { NotificationProvider, TransactionPopupProvider } from "@blockscout/app-sdk";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
@@ -55,7 +55,9 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
           theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
         >
           <NotificationProvider>
-            <ScaffoldEthApp>{children}</ScaffoldEthApp>
+            <TransactionPopupProvider>
+              <ScaffoldEthApp>{children}</ScaffoldEthApp>
+            </TransactionPopupProvider>
           </NotificationProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
