@@ -94,12 +94,6 @@ To know more about its features, check out our [website](https://scaffoldeth.io)
 
 For Blockscout integration details, visit the [Blockscout documentation](https://docs.blockscout.com/).
 
-## 🤝 Contributing to Scaffold-ETH 2
-
-We welcome contributions to Scaffold-ETH 2!
-
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
-
 ## 🏆 ETH Global Prague 2025
 
 This project demonstrates the seamless integration of Scaffold-ETH 2 with Blockscout's powerful blockchain exploration tools, created as part of the ETH Global Prague 2025 Hackathon. The combination provides developers with an enhanced toolkit for building, debugging, and monitoring decentralized applications.
